@@ -1,8 +1,11 @@
 (in-package :cl-user)
 
-(defpackage gps1-domain
-  (:use :cl))
-(in-package :gps1-domain)
+(defpackage re-gps-domains1
+  (:use :cl)
+  (:import-from #:re-gps-op2
+                #:make-op)
+  (:export #:*school-ops*))
+(in-package :re-gps-domains1)
 
 (defparameter *school-ops*
   (list (make-op :action 'drive-son-to-school

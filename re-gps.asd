@@ -6,10 +6,17 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ()
+  :depends-on (:alexandria)
   :components ((:module "src"
+                :serial t
                 :components
-                ((:file "re-gps"))))
+                ((:file "util2")
+                 (:file "op2")
+                 (:file "domains1")
+                 (:file "domains2")
+                 (:file "debug")
+                 (:file "gps2")
+                 (:file "re-gps"))))
   :description ""
   :long-description
   #.(read-file-string

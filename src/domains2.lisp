@@ -1,8 +1,17 @@
 (in-package :cl-user)
 
-(defpackage gps2-domains
-  (:use :cl :gps2))
-(in-package :gps2-domains)
+(defpackage re-gps-domains2
+  (:use :cl :re-gps-op2 :re-gps-util2)
+  (:export #:*banana-ops*
+           #:*maze-ops*
+           #:*school-ops*
+           #:find-path
+           #:make-block-ops))
+(in-package :re-gps-domains2)
+
+(defparameter *school-ops*
+  (mapcar 'convert-op
+          re-gps-domains1:*school-ops*))
 
 (defparameter *banana-ops*
   (list
@@ -31,7 +40,6 @@
         :add-list '(empty-handed not-hungry)
         :del-list '(has-bananas hungry))))
 
-
 ;;;; maze domain
 (defun make-maze-ops (pair)
   "Make maze ops in both directions"
@@ -46,11 +54,22 @@
       :del-list `((at ,here))))
 
 (defparameter *maze-ops*
-  (mappend #'make-maze-ops
+  (mapcan #'make-maze-ops
      '((1 2) (2 3) (3 4) (4 9) (9 14) (9 8) (8 7) (7 12) (12 13)
        (12 11) (11 6) (11 16) (16 17) (17 22) (21 22) (22 23)
        (23 18) (23 24) (24 19) (19 20) (20 15) (15 10) (10 5) (20 25))))
 
+(defun find-path (start end)
+  "Search a maze for a path from start to end."
+  (let ((results (GPS `((at ,start)) `((at ,end)))))
+    (unless (null results)
+      (cons start (mapcar #'destination
+                          (remove '(start) results
+                                  :test #'equal))))))
+
+(defun destination (action)
+  "Find the Y in (executing (move from X to Y))"
+  (fifth (second action)))
 
 ;;;; block domain
 (defun make-block-ops (blocks)
@@ -73,6 +92,6 @@
       :del-list (move-ons a c b)))
 
 (defun move-ons (a b c)
-  (if (eq b 'table)
+  (if (eql-symbol-name b 'table)
       `((,a on ,c))
       `((,a on ,c) (space on ,b))))
